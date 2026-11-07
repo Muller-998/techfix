@@ -11,6 +11,11 @@ def _carregar_env():
             if linha and not linha.startswith("#") and "=" in linha:
                 chave, valor = linha.split("=", 1)
                 os.environ.setdefault(chave.strip(), valor.strip())
+    else:
+        # Valores padrão para o robô do github conseguir rodar os testes sem o arquivo .env
+        os.environ.setdefault('DJANGO_SECRET_KEY','chave-secreta-para-os-testes-automatizados')
+        os.environ.setdefault('DJANGO_DEBUG', '1')
+        os.envirom.setdefault9'DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1')
 
 _carregar_env()
 
