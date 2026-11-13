@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}TechFix{% endblock %}</title>
+<style>
+:root{--ink:#1A2B33;--paper:#F2F4F3;--azul:#0B4F8A;--erro:#A11D1D;--erro-bg:#FDECEC;--ok:#0B5D3B;--ok-bg:#E3F4EA;--pend:#7A4100;--pend-bg:#FFF3D6;--na:#3F4B52;--na-bg:#ECEFF1;--foco:#1E6FD9;--borda:#5B6B73}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI",system-ui,Arial,sans-serif;font-size:17px;line-height:1.45}
+.topo{background:#16262E;color:#fff;padding:14px 5vw;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.marca{font-size:24px;font-weight:700}.marca small{display:block;font-size:14px;font-weight:400;color:#D5DEE2}
+.usuario{display:flex;align-items:center;gap:16px;text-align:right;font-size:15px}.usuario small{display:block;color:#D5DEE2;font-size:14px}
+.conteudo{max-width:1100px;margin:0 auto;padding:28px 5vw 12px}
+h1{font-size:32px;margin:0 0 6px}h2{font-size:22px;margin:0 0 14px}
+.lead{margin:0 0 22px;color:#33444C}
+.cartao{background:#fff;border:1px solid #BFC9CE;border-radius:10px;padding:24px 28px;margin-bottom:24px}
+.pequeno{font-size:14px;color:#4A5961}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.campo{margin-bottom:16px}.rotulo{display:block;font-weight:700;margin-bottom:4px}.dica{font-size:14px;color:#4A5961;margin-bottom:6px}
+input[type=text],input[type=password],input[type=date],select{width:100%;max-width:520px;min-height:48px;padding:0 14px;font-size:18px;border:2px solid var(--borda);border-radius:6px;background:#fff;color:var(--ink)}
+.campo:has(.erro) input,.campo:has(.erro) select{border-color:var(--erro);border-width:3px}
+:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
+.erro{color:var(--erro);font-weight:700;margin-top:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 26px;border:2px solid var(--azul);border-radius:6px;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer;background:#fff;color:var(--azul)}
+.btn-p{background:var(--azul);color:#fff}.btn-grande{min-height:56px;font-size:18px;padding:0 34px}
+.btn-out{background:transparent;color:#fff;border-color:#fff;min-height:44px}
+.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.acoes form,.linha-acoes form{margin:0}
+.estado{display:inline-block;padding:5px 14px;border-radius:20px;font-weight:700;font-size:15px;border:2px solid}
+.ok{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}.pend{color:var(--pend);background:var(--pend-bg);border-color:var(--pend)}.na{color:var(--na);background:var(--na-bg);border-color:var(--na)}
+.andamento{color:var(--azul);background:#E6F0FA;border-color:var(--azul)}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-size:15px;color:#33444C;padding:10px 14px;border-bottom:2px solid var(--borda)}td{padding:10px 14px;border-bottom:1px solid #D3DADD}
+tr.destaque td{background:#FFF9EA}.linha-acoes{display:flex;gap:8px;flex-wrap:wrap}
+.leitura{background:#EEF1F2;border:2px solid #8996A0;border-radius:6px;min-height:48px;padding:10px 14px}
+.alerta{border-left:10px solid var(--erro);background:var(--erro-bg);border-radius:8px;padding:26px 30px}
+.alerta-ok{border-left:10px solid var(--ok);background:var(--ok-bg);border-radius:8px;padding:26px 30px}
+.alerta .grande,.alerta-ok .grande{font-size:26px;font-weight:700}.alerta .grande{color:#7F1414}.alerta-ok .grande{color:#084A2F}
+.msg{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:700;border:2px solid var(--ok);background:var(--ok-bg);color:var(--ok)}
+.msg-error{border-color:var(--erro);background:var(--erro-bg);color:var(--erro)}
+.rodape{text-align:center;color:#4A5961;font-size:14px;padding:10px 0 26px}
+@media (max-width:640px){.cartao{padding:18px}h1{font-size:26px}}
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="marca">TechFix<small>Conferência de aparelhos</small></div>
+  {% if user.is_authenticated %}
+  <div class="usuario">
+    <div>{{ user.get_full_name|default:user.username }}<small>Perfil: {% for g in user.groups.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% empty %}sem perfil{% endfor %}</small></div>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="btn btn-out">Sair</button></form>
+  </div>
+  {% endif %}
+</header>
+<main class="conteudo">
+  {% if messages %}{% for m in messages %}<div class="msg{% if m.tags == 'error' %} msg-error{% endif %}" role="status">{% if m.tags == 'error' %}⚠{% else %}✔{% endif %} {{ m }}</div>{% endfor %}{% endif %}
+  {% block conteudo %}{% endblock %}
+</main>
+<footer class="rodape">TechFix · versão de demonstração 0.1 · dados fictícios</footer>
+</body>
+</html>

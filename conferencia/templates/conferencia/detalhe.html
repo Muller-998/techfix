@@ -1,0 +1,62 @@
+{% extends "conferencia/base.html" %}
+{% block titulo %}OS {{ ordem.numero_os }} · TechFix{% endblock %}
+{% block conteudo %}
+<p><a class="btn" href="{% url 'inicio' %}">← Voltar ao início</a></p>
+<h1>OS {{ ordem.numero_os }}</h1>
+<p class="lead">{{ ordem.descricao_curta }}</p>
+<section class="cartao">
+  <div class="grade">
+    <div><div class="pequeno">Tipo do aparelho</div><strong>{{ ordem.get_tipo_aparelho_display }}</strong></div>
+    <div><div class="pequeno">Técnico</div><strong>{% if ordem.tecnico %}{{ ordem.tecnico.get_full_name|default:ordem.tecnico.username }}{% else %}A definir{% endif %}</strong></div>
+    <div><div class="pequeno">Entrega prevista</div><strong>{{ ordem.data_prevista|date:"d/m/Y"|default:"A definir" }}</strong></div>
+    <div><div class="pequeno">Status</div><span class="estado andamento">◐ {{ ordem.get_status_display }}</span></div>
+  </div>
+</section>
+<section class="cartao">
+  <h2>Ficha de entrada</h2>
+  {% if ficha %}
+  <div class="grade">
+    <div><span class="rotulo">Acessórios recebidos</span><div class="leitura">{{ ficha.acessorios_recebidos }}</div></div>
+    <div><span class="rotulo">Estado visível</span><div class="leitura">{{ ficha.estado_visivel }}</div></div>
+  </div>
+  <div class="pequeno" style="margin-top:10px">Registrada por {{ ficha.registrada_por.get_full_name|default:ficha.registrada_por.username }} em {{ ficha.registrada_em|date:"d/m/Y, H:i" }}. Só a atendente edita a ficha.</div>
+  {% else %}
+  <p>Nenhuma ficha de entrada registrada para esta OS.</p>
+  {% endif %}
+</section>
+<section class="cartao">
+  <h2>Checklist de saída <span class="pequeno" style="font-weight:400;margin-left:12px"><strong>{{ resolvidos }} de {{ total }}</strong> testes resolvidos</span></h2>
+  <table>
+    <tr><th>Teste</th><th>Resultado</th><th>Registro</th><th>Ação</th></tr>
+    {% for item in itens %}
+    <tr{% if item.resultado == "pendente" %} class="destaque"{% endif %}>
+      <td><strong>{{ item.teste.nome_teste }}</strong></td>
+      <td>{% if item.resultado == "aprovado" %}<span class="estado ok">✔ Aprovado</span>{% elif item.resultado == "nao_se_aplica" %}<span class="estado na">— Não se aplica</span>{% else %}<span class="estado pend">○ Pendente</span>{% endif %}</td>
+      <td class="pequeno">{% if item.marcado_por %}{{ item.marcado_por.get_full_name|default:item.marcado_por.username }}, {{ item.marcado_em|date:"d/m H:i" }}{% else %}Aguardando teste{% endif %}</td>
+      <td>
+        {% if eh_tecnico and ordem.status == "em_reparo" and item.resultado == "pendente" %}
+        <div class="linha-acoes">
+          <form method="post" action="{% url 'marcar_item' item.pk 'aprovado' %}">{% csrf_token %}<button type="submit" class="btn btn-p">Aprovar</button></form>
+          <form method="post" action="{% url 'marcar_item' item.pk 'nao_se_aplica' %}">{% csrf_token %}<button type="submit" class="btn">Não se aplica</button></form>
+        </div>
+        {% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">Esta OS não tem itens de checklist.</td></tr>
+    {% endfor %}
+  </table>
+</section>
+<div class="acoes">
+  {% if eh_tecnico and ordem.status == "recebido" %}
+  <form method="post" action="{% url 'iniciar_reparo' ordem.numero_os %}">{% csrf_token %}<button type="submit" class="btn btn-p btn-grande">Iniciar reparo</button></form>
+  {% endif %}
+  {% if eh_tecnico and ordem.status == "em_reparo" %}
+  <form method="post" action="{% url 'concluir' ordem.numero_os %}">{% csrf_token %}<button type="submit" class="btn btn-p btn-grande">Marcar como pronto</button></form>
+  <span class="pequeno" style="align-self:center">Só é possível quando nenhum teste estiver pendente.</span>
+  {% endif %}
+  {% if eh_atendente and ordem.status == "pronto" %}
+  <form method="post" action="{% url 'avisar_cliente' ordem.numero_os %}">{% csrf_token %}<button type="submit" class="btn btn-p btn-grande">Registrar cliente avisado</button></form>
+  {% endif %}
+</div>
+{% endblock %}

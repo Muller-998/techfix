@@ -1,0 +1,18 @@
+{% extends "conferencia/base.html" %}
+{% block titulo %}Conclusão bloqueada · TechFix{% endblock %}
+{% block conteudo %}
+<p><a class="btn" href="{% url 'inicio' %}">← Voltar ao início</a></p>
+<h1>OS {{ ordem.numero_os }}</h1>
+<p class="lead">{{ ordem.descricao_curta }}</p>
+<div class="alerta" role="alert">
+  <div class="grande">⚠ Não é possível concluir: {{ pendentes|length }} teste{{ pendentes|length|pluralize }} pendente{{ pendentes|length|pluralize }}</div>
+  <p>Falta resolver:</p>
+  <p>{% for p in pendentes %}<span class="estado pend">○ {{ p.teste.nome_teste }}</span> {% endfor %}</p>
+  <p><strong>O que fazer:</strong> marque cada teste como Aprovado ou Não se aplica e tente de novo.</p>
+  <a class="btn btn-p btn-grande" href="{% url 'detalhe' ordem.numero_os %}">Voltar ao checklist</a>
+</div>
+<section class="cartao" style="margin-top:24px">
+  <h2>Já resolvidos</h2>
+  {% for r in resolvidos %}<span class="estado {% if r.resultado == 'aprovado' %}ok{% else %}na{% endif %}">{% if r.resultado == 'aprovado' %}✔{% else %}—{% endif %} {{ r.teste.nome_teste }}</span> {% empty %}<span class="pequeno">Nenhum teste resolvido ainda.</span>{% endfor %}
+</section>
+{% endblock %}

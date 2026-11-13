@@ -1,0 +1,6 @@
+<div class="campo">
+  <label for="{{ campo.id_for_label }}" class="rotulo">{{ campo.label }}{% if campo.field.required %} *{% endif %}</label>
+  {% if campo.help_text %}<div class="dica">{{ campo.help_text }}</div>{% endif %}
+  {{ campo }}
+  {% for erro in campo.errors %}<div class="erro" role="alert">⚠ {{ erro }}</div>{% endfor %}
+</div>

@@ -1,0 +1,29 @@
+{% extends "conferencia/base.html" %}
+{% block titulo %}Início · TechFix{% endblock %}
+{% block conteudo %}
+<h1>Início</h1>
+<p class="lead">Busque uma OS pelo número ou registre a entrada de um aparelho.</p>
+<section class="cartao">
+  <h2>Buscar OS</h2>
+  <form method="get" action="{% url 'inicio' %}" novalidate>
+    {% include "conferencia/_campo.html" with campo=form.numero_os %}
+    {% if nao_encontrada %}<div class="erro" role="alert">⚠ OS não encontrada. Confira o número ou registre uma nova OS.</div>{% endif %}
+    <div class="acoes">
+      <button type="submit" class="btn btn-p">Buscar</button>
+      {% if eh_atendente %}<a class="btn" href="{% url 'nova_os' %}">Nova OS</a>{% endif %}
+    </div>
+  </form>
+</section>
+<section class="cartao">
+  <h2>Carga dos técnicos</h2>
+  <table>
+    <tr><th>Técnico</th><th>OS em aberto</th><th>Próxima entrega</th></tr>
+    {% for t in carga %}
+    <tr><td>{{ t.get_full_name|default:t.username }}</td><td><strong>{{ t.em_aberto }}</strong> OS</td><td>{{ t.proxima|date:"d/m/Y"|default:"—" }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">Nenhum técnico cadastrado.</td></tr>
+    {% endfor %}
+  </table>
+  <div class="pequeno" style="margin-top:10px">Conta as OS com status recebido ou em reparo.</div>
+</section>
+{% endblock %}

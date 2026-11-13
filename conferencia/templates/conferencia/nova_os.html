@@ -1,0 +1,28 @@
+{% extends "conferencia/base.html" %}
+{% block titulo %}Nova OS · TechFix{% endblock %}
+{% block conteudo %}
+<p><a class="btn" href="{% url 'inicio' %}">← Voltar ao início</a></p>
+<h1>Nova OS</h1>
+<p class="lead">Registre o que o aparelho trouxe. Campos com * são obrigatórios.</p>
+<form method="post" novalidate>{% csrf_token %}
+  {% for erro in form.non_field_errors %}<div class="erro" role="alert">⚠ {{ erro }}</div>{% endfor %}
+  <section class="cartao">
+    <h2>Identificação</h2>
+    {% include "conferencia/_campo.html" with campo=form.numero_os %}
+    {% include "conferencia/_campo.html" with campo=form.tipo_aparelho %}
+    {% include "conferencia/_campo.html" with campo=form.descricao_curta %}
+  </section>
+  <section class="cartao">
+    <h2>Ficha de entrada</h2>
+    {% include "conferencia/_campo.html" with campo=form.acessorios_recebidos %}
+    {% include "conferencia/_campo.html" with campo=form.estado_visivel %}
+  </section>
+  <section class="cartao">
+    <h2>Prazo</h2>
+    {% include "conferencia/_campo.html" with campo=form.tecnico %}
+    {% include "conferencia/_campo.html" with campo=form.data_prevista %}
+  </section>
+  <div class="cartao" style="background:#E6F0FA;border-color:#0B4F8A"><strong>Ao salvar</strong>, o sistema cria o checklist de saída com os testes do tipo de aparelho escolhido.</div>
+  <div class="acoes"><button type="submit" class="btn btn-p btn-grande">Salvar ficha</button><a class="btn btn-grande" href="{% url 'inicio' %}">Cancelar</a></div>
+</form>
+{% endblock %}

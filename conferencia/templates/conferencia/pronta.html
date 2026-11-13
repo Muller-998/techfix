@@ -1,0 +1,12 @@
+{% extends "conferencia/base.html" %}
+{% block titulo %}OS pronta · TechFix{% endblock %}
+{% block conteudo %}
+<p><a class="btn" href="{% url 'inicio' %}">← Voltar ao início</a></p>
+<h1>OS {{ ordem.numero_os }}</h1>
+<p class="lead">{{ ordem.descricao_curta }}</p>
+<div class="alerta-ok" role="status">
+  <div class="grande">✔ OS {{ ordem.numero_os }} pronta. Avise o cliente.</div>
+  <p>Todos os testes foram resolvidos: <strong>{{ aprovados }} aprovado{{ aprovados|pluralize }}</strong> e <strong>{{ nao_se_aplica }} não se aplica</strong>. Confira os acessórios da ficha de entrada na devolução.</p>
+  <a class="btn btn-p btn-grande" href="{% url 'detalhe' ordem.numero_os %}">Ver a OS</a>
+</div>
+{% endblock %}
