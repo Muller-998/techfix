@@ -1,0 +1,8 @@
+[run]
+source = conferencia
+omit =
+    */migrations/*
+    */tests.py
+
+[report]
+show_missing = True
