@@ -9,9 +9,6 @@ on:
 jobs:
   testes:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: techfix
     steps:
       - name: Baixar o codigo
         uses: actions/checkout@v4
